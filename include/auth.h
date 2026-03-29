@@ -1,0 +1,17 @@
+#ifndef AUTH_H
+#define AUTH_H
+#define FILE_NAME "users.dat"
+struct user{
+    int user_id;
+    char username[50];
+    char password[50];
+    char role[20];
+    int is_active;
+};
+
+struct user login(char username[],char password[]);
+void logout(struct user u);
+void create_user();
+void save_user(struct user u,char filename[]);
+struct user load_user(char filename[],char username[]);
+#endif

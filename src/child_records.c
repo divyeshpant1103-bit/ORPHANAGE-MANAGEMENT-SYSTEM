@@ -3,12 +3,21 @@
 #include <stdlib.h>
 #include "../include/child.h"
 
+#define CHILD_DATA_FILE_PRIMARY "../data/children.dat"
+#define CHILD_DATA_FILE_FALLBACK "data/children.dat"
+
 struct Orphan *children = NULL;
 int child_count = 0;
 int children_capacity = 0;
 int next_child_id=1000;
 
 void child_menu(){
+    static int loaded_once = 0;
+    if(!loaded_once){
+        load_children();
+        loaded_once = 1;
+    }
+
     int choice;
     while(1){
         
@@ -38,6 +47,7 @@ void child_menu(){
         }
     }
 }
+
 void child_add(){
     // Resize array if needed
     if (child_count >= children_capacity) {
@@ -93,6 +103,7 @@ void child_add(){
     children[i].status[strcspn(children[i].status,"\n")]=0;
 
     child_count++;
+    save_children();
 }
 
 void child_display(){
@@ -180,6 +191,7 @@ void child_delete(){
         children[i]=children[i+1];
     }
     child_count--;
+    save_children();
     printf("Child with ID %d deleted successfully!\n",id);
 }
 
@@ -222,42 +234,50 @@ void child_update(){
                     fgets(children[found].child_name,100,stdin);
                     children[found].child_name[strcspn(children[found].child_name,"\n")]=0;
                     printf("Child name Updated successfully!\n");
+                    save_children();
                     break;
             case 2: printf("Enter the new child age: ");
                     scanf("%d",&children[found].child_age);
                     getchar();
                     printf("Child age updated successfully!\n");
+                    save_children();
                     break;
             case 3: printf("Enter the child gender: ");
                     fgets(children[found].child_gender,50,stdin);
                     children[found].child_gender[strcspn(children[found].child_gender,"\n")]=0;
                     printf("Child gender updated successfully!\n");
+                    save_children();
                     break;
             
             case 4: printf("Enter the blood group: ");
                     fgets(children[found].child_BG,20,stdin);
                     children[found].child_BG[strcspn(children[found].child_BG,"\n")]=0;
                     printf("Child blood group updated successfully!\n");
+                    save_children();
                     break;
             case 5: printf("Update child education: ");
                     fgets(children[found].education,100,stdin);
                     children[found].education[strcspn(children[found].education,"\n")]=0;
                     printf("Child gender updated successfully!\n");
+                    save_children();
                     break;
             case 6: printf("Update child health status: ");
                     fgets(children[found].health_status,80,stdin);
                     children[found].health_status[strcspn(children[found].health_status,"\n")]=0;
                     printf("Child gender updated successfully!\n");
+                    save_children();
                     break;
             case 7: printf("Update child medical report: ");
                     fgets(children[found].medical_report,100,stdin);
                     children[found].medical_report[strcspn(children[found].medical_report,"\n")]=0;
                     printf("Child gender updated successfully!\n");
+                    save_children();
                     break;
             case 8: printf("Update child status: ");
                     fgets(children[found].status,20,stdin);
                     children[found].status[strcspn(children[found].status,"\n")]=0;
                     printf("Child gender updated successfully!\n");
+                    save_children();
                     break;
             case 0: return;
             default: printf("Invalid choice!\n");   
@@ -266,7 +286,7 @@ void child_update(){
 }
 
 int generate_child_id(){
-    int id = next_child_id;
+    int id = next_child_id++;
     printf("Suggested Child ID: %d\n", id);
     printf("Use this ID when adding a new child!\n"); 
     return id; 
@@ -275,8 +295,61 @@ int update_child_Status(int child_id, const char *new_status){
     for(int i=0;i<child_count;i++){
         if(children[i].child_id==child_id){
             strcpy(children[i].status,new_status);
+            save_children();
             return 1;
         }
     }
     return 0;
+}
+
+void save_children(){
+    FILE *file = fopen(CHILD_DATA_FILE_PRIMARY, "wb");
+    if(file == NULL){
+        file = fopen(CHILD_DATA_FILE_FALLBACK, "wb");
+    }
+
+    if(file == NULL){
+        printf("ERROR: Unable to open child data file for writing.\n");
+        return;
+    }
+
+    fwrite(&child_count, sizeof(int), 1, file);
+    if(child_count > 0){
+        fwrite(children, sizeof(struct Orphan), child_count, file);
+    }
+    fwrite(&next_child_id, sizeof(int), 1, file);
+    fclose(file);
+}
+
+
+void load_children(){
+    FILE *file = fopen("children.dat", "rb");
+    if(file == NULL){
+        child_count = 0;
+        next_child_id = 1000;
+        return;
+    }
+
+    // child count padho
+    fread(&child_count, sizeof(int), 1, file);
+
+    // memory allocate karo
+    children = (struct Orphan*)malloc(sizeof(struct Orphan) * child_count);
+    if(children == NULL){
+        printf("Memory allocation failed!\n");
+        fclose(file);
+        return;
+    }
+
+    // data padho
+    fread(children, sizeof(struct Orphan), child_count, file);
+
+    // next id padho
+    fread(&next_child_id, sizeof(int), 1, file);
+
+    if(next_child_id < 1000){
+        next_child_id = 1000;
+    }
+
+    fclose(file);
 }

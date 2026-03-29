@@ -1,0 +1,5 @@
+.DS_Store
+src/orphanage
+src/orphanage_app
+src/users.dat
+*.tmp
