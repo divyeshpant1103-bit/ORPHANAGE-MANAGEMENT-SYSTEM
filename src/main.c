@@ -3,10 +3,8 @@
 #include "../include/child.h"
 #include "../include/adoption.h"
 #include "../include/auth.h"
-
-/* Forward declarations for modules without header declarations */
-void staff_menu(void);
-void donar_menu(void);
+#include "../include/staff.h"
+#include "../include/donar.h"
 
 static int is_admin_role(const char role[]){
     return (strcmp(role, "Admin") == 0 || strcmp(role, "admin") == 0);

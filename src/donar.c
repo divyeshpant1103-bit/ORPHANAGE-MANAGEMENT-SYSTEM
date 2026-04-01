@@ -1,26 +1,10 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<ctype.h>
+#include"../include/donar.h"
 
 #define DONAR_FILE "../data/donar.txt"
-struct donar
-{
-	int donar_id; //by user
-	char name[20];
-	char donation_type[30];  // monetary, food, clothes, etc.
-	char contact[15];
-	float quantity;
-	char donation_date[15];
-
-};
-
-static int count();
-void add_donar();
-void search_donar();
-int generate_prev_donar_id();
-void display_donar_list();
-void delete_donar();
-void update_donar_details();
 
 void donar_menu()
 {
@@ -63,35 +47,44 @@ void donar_menu()
 	} while(choice != 0);
 }
 
-int count()
+static int count()
 {
 	FILE *fp;
 	char line[300];
 	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
 	{
-		printf("Error opening file!\n");
-		return -1 ;
+		fp = fopen(DONAR_FILE, "w");
+		if (fp == NULL)
+		{
+			printf("Error opening file!\n");
+			return 0 ;
+		}
+		fprintf(fp,"%-15s\t%-18s\t%-29s\t%-18s\t%-15s\t%s\n","DONAR ID", "NAME", "TYPE OF DONATION", "CONTACT", "QUANTITY","DONATION DATE" );
+		fprintf(fp,"_______________________________________________________________________________________________________________________\n");
+		fclose(fp);
+		return 0;
 	}
 
 	int count=0;
 	while (fgets(line, sizeof(line), fp) != NULL)
 	{
-		count++;
+		if (isdigit((unsigned char)line[0]))
+		{
+			count++;
+		}
 	}
 
 	fclose(fp);
-	if(count!=0)
-		return (count-2);                   // -2 to exclude the __ and header so as to return number of donar added
-	else
-		return 0;
+	return count;
 }
 
 int generate_prev_donar_id()
 {
 	int donar_count= count();
 	char line[300];
-	int prev_donar_id=0;
+	int prev_donar_id=35099;
+	int file_id=0;
 	FILE *fp;
 	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
@@ -101,13 +94,17 @@ int generate_prev_donar_id()
 	}
 	if(donar_count==0)
 	{
+		fclose(fp);
 		return 35099;
 	}
 	while(fgets(line, sizeof(line), fp)!= NULL)
 	{
-		sscanf(line, "%d",&prev_donar_id);
+		if (sscanf(line, "%d",&file_id) == 1)
+		{
+			prev_donar_id = file_id;
+		}
 	}
-
+	fclose(fp);
 	return (prev_donar_id);
 }
 
