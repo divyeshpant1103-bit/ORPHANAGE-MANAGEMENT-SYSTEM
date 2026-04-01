@@ -16,7 +16,7 @@ void donar_menu()
 		printf("3. To search donar\n");
 		printf("4. To update donar details\n");
 		printf("5. To delete donar details\n");
-		printf("0. Back\n\n");
+		printf("0. Back\n");
 		printf("Enter the choice  ");
 		scanf("%d",&choice);
 		getchar();
@@ -171,20 +171,15 @@ void add_donar()
 		getchar();
 		printf("Enter the quantity dontated : ");                                    // quantity
 		scanf("%f",&s[i].quantity);
-
 		getchar();
 
 		printf("Enter Donar donation date (dd mm yyyy) ");                               //joining date
 		scanf("%d%d%d", &d, &m, &y );
 
 		sprintf(s[i].donation_date,"%02d/%02d/%04d", d, m, y );
-
 		getchar();                                                                      //empty buffer
 
-		printf("\n");
-		fprintf(fp,"%d\t%s\t%s\t%s\t%f\t%s \n", s[i].donar_id, s[i].name, s[i].donation_type, s[i].contact, s[i].quantity, s[i].donation_date);
-
-		getchar();
+		fprintf(fp,"%d\t%s\t%s\t%s\t%.2f\t%s\n", s[i].donar_id, s[i].name, s[i].donation_type, s[i].contact, s[i].quantity, s[i].donation_date);
 	}
 	printf("\nDonar details added successfully!!!");
 	fclose(fp);
@@ -250,10 +245,9 @@ void search_donar()
 	{
 		sscanf(line,"%d\t%[^\t]\t%[^\t]\t%[^\t]\t%f\t%[^\t]\n", &file_id, s.name, s.donation_type, s.contact, &s.quantity, s.donation_date);
 
-
 		if(file_id == search_id)
 		{
-			printf(line,"%-15d\t%-18s\t%-29s\t%-18s\t%-15f\t%s \n", file_id, s.name, s.donation_type, s.contact, s.quantity, s.donation_date);
+			printf("%-15d\t%-18s\t%-29s\t%-18s\t%-15.2f\t%s\n", file_id, s.name, s.donation_type, s.contact, s.quantity, s.donation_date);
 
 			flag=1;
 			break;
@@ -268,7 +262,7 @@ void search_donar()
 
 static void change(struct donar *s)
 {
-	int choise;
+	int choice;
 	size_t len;
 
 	do
@@ -281,10 +275,10 @@ static void change(struct donar *s)
 		printf("5. Donation date\n");
 		printf("0. To exit\n");
 
-		scanf("%d", &choise);
+		scanf("%d", &choice);
 		getchar();
 
-		switch (choise)
+		switch (choice)
 		{
 		case 1:
 		{
@@ -309,6 +303,7 @@ static void change(struct donar *s)
 			s->donation_type[sizeof(s->donation_type)-1] = '\0';
 			break;
 		}
+
 		case 3:
 		{
 			char contact[50];
@@ -343,7 +338,7 @@ static void change(struct donar *s)
 			printf("\nDonar record UPDATED successfully !!\nExiting...\n");
 			return;
 		}
-	} while (choise != 0);
+	} while (choice != 0);
 }
 
 void update_donar_details()
