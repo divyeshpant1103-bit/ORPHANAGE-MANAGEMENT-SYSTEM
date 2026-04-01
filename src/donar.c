@@ -2,6 +2,7 @@
 #include<string.h>
 #include<stdlib.h>
 
+#define DONAR_FILE "../data/donar.txt"
 struct donar
 {
 	int donar_id; //by user
@@ -13,7 +14,7 @@ struct donar
 
 };
 
-int count();
+static int count();
 void add_donar();
 void search_donar();
 int generate_prev_donar_id();
@@ -66,7 +67,7 @@ int count()
 {
 	FILE *fp;
 	char line[300];
-	fp = fopen("donar.txt", "r");
+	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -92,7 +93,7 @@ int generate_prev_donar_id()
 	char line[300];
 	int prev_donar_id=0;
 	FILE *fp;
-	fp = fopen("donar.txt", "r");
+	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -115,7 +116,7 @@ void add_donar()
 	int donar_count= count();
 	int d,m,y;
 	FILE *fp;
-	fp = fopen("donar.txt", "a");
+	fp = fopen(DONAR_FILE, "a");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -200,7 +201,7 @@ void display_donar_list()
 	char line[300];
 
 	struct donar s;
-	fp = fopen("donar.txt", "r");
+	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -233,7 +234,7 @@ void search_donar()
 	char line[300];
 	struct donar s;
 	int search_id, file_id, flag=0;
-	fp = fopen("donar.txt", "r");
+	fp = fopen(DONAR_FILE, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -268,7 +269,7 @@ void search_donar()
 	fclose(fp);
 }
 
-void change(struct donar *s)
+static void change(struct donar *s)
 {
 	int choise;
 	size_t len;
@@ -360,8 +361,8 @@ start:
 	printf("Enter the id of the Donar to update details: ");
 	scanf("%d", &search_id);
 
-	fp = fopen("donar.txt", "r");
-	temp = fopen("temp.txt", "w");
+	fp = fopen(DONAR_FILE, "r");
+	temp = fopen("../data/temp_donar.txt", "w");
 	if (fp == NULL || temp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -397,14 +398,14 @@ start:
 		printf("Donar ID not found !!\n");
 		fclose(fp);
 		fclose(temp);
-		remove("temp.txt");
+		remove("../data/temp_donar.txt");
 		goto start;
 	}
 
 	fclose(fp);
 	fclose(temp);
-	remove("donar.txt");
-	rename("temp.txt", "donar.txt");
+	remove(DONAR_FILE);
+	rename("../data/temp_donar.txt", DONAR_FILE);
 }
 
 void delete_donar()
@@ -415,8 +416,8 @@ void delete_donar()
 	int search_id, file_id ;
 	int flag=0;
 
-	fp = fopen("donar.txt", "r");
-	temp = fopen("temp.txt", "w");
+	fp = fopen(DONAR_FILE, "r");
+	temp = fopen("../data/temp_donar.txt", "w");
 	if (fp == NULL || temp ==NULL)
 	{
 		printf("Error opening file!\n");
@@ -452,6 +453,6 @@ void delete_donar()
 
 	fclose(fp);
 	fclose(temp);
-	remove("donar.txt");
-	rename("temp.txt","donar.txt");
+	remove(DONAR_FILE);
+	rename("../data/temp_donar.txt", DONAR_FILE);
 }

@@ -1,13 +1,30 @@
+/*
+ * adoption.c
+ * Manage adoption applications: collect adopter details,
+ * track adoption applications, approve adoptions and update
+ * related child status via the child records module.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/adoption.h"
 #include "../include/child.h"
-
+/* Dynamic array for adoption applications */
 struct adoption *adopters = NULL;
+/* Number of adoption applications currently in memory */
 int adoption_count = 0;
+/* Allocated capacity of the `adopters` array */
 int adoption_capacity = 0;
+/* Next adoption id generator */
 int next_adoption_id = 5000;
+
+
+/*
+ * adoption_menu: Shows the Adoption menu and routes user choices
+ * to adoption operations (add, display, search, update, delete,
+ * and approve adoption applications).
+ */
 
 void adoption_menu(){
     while(1){
@@ -43,6 +60,11 @@ void adoption_menu(){
     }
 }
 
+/*
+ * adoption_add: Gather adopter details, assign an adoption id
+ * and store the application in memory (persisting is left to
+ * program lifecycle). New records start with status "Pending".
+ */
 void adoption_add(){
     if(adoption_count>=adoption_capacity){
         int new_capacity=(adoption_capacity==0)?10:adoption_capacity*2;
@@ -106,6 +128,11 @@ void adoption_add(){
 
 
 
+/*
+ * adoption_approve: Mark an adoption record as approved, set
+ * the approval date, and update the corresponding child's
+ * status by calling `update_child_Status()` from child records.
+ */
 void adoption_approve(){
     if(adoption_count==0){
         printf("NO Adopters Record!!");
@@ -146,6 +173,9 @@ void adoption_approve(){
     }
 
 }
+/*
+ * adoption_display: Print all loaded adoption application records.
+ */
 void adoption_display(){
     if(adoption_count == 0){
         printf("No adoption records found!\n");
@@ -161,6 +191,146 @@ void adoption_display(){
         printf("-----------------------------\n");
     }
 }
-void adoption_search(){}
-void adoption_update(){}
-void adoption_delete(){}
+/*
+ * adoption_search: Find and display a single adoption record
+ * by adoption id.
+ */
+void adoption_search(){
+    if(adoption_count==0){
+        printf("NO adoption record found!!\n");
+        return;
+    }
+    int search_id;
+    printf("Enter th Adoption ID to search: ");
+    scanf("%d",&search_id);
+    getchar();
+    int found=-1;
+    for(int i=0;i<adoption_count;i++){
+        if(adopters[i].adoption_id==search_id){
+            printf("ADOPTION ID: %d\n", adopters[i].adoption_id);
+            printf("CHILD ID: %d\n", adopters[i].child_id);
+            printf("ADOPTER NAME: %s\n", adopters[i].adopter_name);
+            printf("ADOPTER AGE: %d\n", adopters[i].adopter_age);
+            printf("ADOPTER CONTACT: %s\n", adopters[i].adopter_contact);
+            printf("ADOPTER ADDRESS: %s\n", adopters[i].adopter_address);
+            printf("ADOPTER OCCUPATION: %s\n", adopters[i].adopter_occupation);
+            printf("ADOPTER INCOME: %.2f\n", adopters[i].adopter_income);
+            printf("MARITAL STATUS: %s\n", adopters[i].marital_status);
+            printf("APPLICATION DATE: %s\n", adopters[i].application_date);
+            printf("APPROVAL DATE: %s\n", adopters[i].approval_date);
+            printf("STATUS: %s\n", adopters[i].status);
+          
+            found=i;
+            break;
+        }
+    }
+    if(found==-1){
+        printf("No adoption record found with this Adoption ID\n");
+    }
+}
+/*
+ * adoption_update: Allow interactive updates to an existing
+ * adoption application's fields.
+ */
+void adoption_update(){
+    if(adoption_count==0){
+        printf("NO adoption record found!!\n");
+        return;
+    }
+    int search_id;
+    printf("Enter the Adoption ID to update: ");
+    scanf("%d", &search_id);
+    getchar();
+    int found=-1;
+    for(int i=0;i<adoption_count;i++){
+        if(adopters[i].adoption_id==search_id){
+            found=i;
+            break;
+        }
+    }
+    if(found==-1){
+        printf("No adoption record found with this Adoption ID\n");
+        return;
+    }
+    while(1){
+        printf("\nChoose the data that need to be updated:\n");
+        printf("1. Update Adopter Name\n");
+        printf("2. Update Adopter Age\n");
+        printf("3. Update Adopter Contact\n");
+        printf("4. Update Adopter Address\n");
+        printf("5. Update Adopter Occuption\n");
+        printf("6. Update Adopter Income\n");
+        printf("7. Update Marital Status\n");
+        printf("0. Back\n");
+        printf("Enter the choice: ");
+        int choice;
+        scanf("%d",&choice);
+        getchar();
+        switch(choice){
+            case 1: printf("Enter the new Adopter Name: ");
+                    fgets(adopters[found].adopter_name,100,stdin);
+                    adopters[found].adopter_name[strcspn(adopters[found].adopter_name,"\n")]=0;
+                    printf("Adopter name updated successfully!\n");
+                    break;
+            case 2: printf("Enter the new Adopter Age: ");
+                    scanf("%d",&adopters[found].adopter_age);
+                    getchar();
+                    printf("Adopter age updated successfully!\n");
+                    break;          
+            case 3: printf("Enter the new Adopter Contact: ");
+                    fgets(adopters[found].adopter_contact,15,stdin);
+                    adopters[found].adopter_contact[strcspn(adopters[found].adopter_contact,"\n")]=0;
+                    printf("Adopter contact updated successfully!\n");
+                    break;
+            case 4: printf("Enter the new Adopter Address: ");
+                    fgets(adopters[found].adopter_address,150,stdin);
+                    adopters[found].adopter_address[strcspn(adopters[found].adopter_address,"\n")]=0;
+                    printf("Adopter address updated successfully!\n");
+                    break;
+            case 5: printf("Enter the new Adopter Occupation: ");
+                    fgets(adopters[found].adopter_occupation,50,stdin);
+                    adopters[found].adopter_occupation[strcspn(adopters[found].adopter_occupation,"\n")]=0;
+                    printf("Adopter occupation updated successfully!\n");
+                    break;
+            case 6: printf("Enter the new Adopter Income: ");
+                    scanf("%f",&adopters[found].adopter_income);
+                    getchar();
+                    printf("Adopter income updated successfully!\n");
+                    break;
+            case 7: printf("Enter the new Marital Status: ");
+                    fgets(adopters[found].marital_status,20,stdin);     
+                    adopters[found].marital_status[strcspn(adopters[found].marital_status,"\n")]=0;
+                    printf("Marital status updated successfully!\n");
+                    break;
+            case 0: return;
+            default: printf("Invalid choice!\n");   
+        }
+    }
+}
+void adoption_delete(){
+    if(adoption_count==0){
+        printf("NO adoption record found!!\n");
+        return;
+    }
+    int search_id;
+    printf("Enter th adoption ID to delete: ");
+    scanf("%d",&search_id);
+    getchar();
+    int found=-1;
+    for(int i=0;i<adoption_count;i++){
+        if(adopters[i].adoption_id==search_id){
+            found=i;
+            break;
+        }
+    }
+    if(found==-1){
+        printf("No adoption record found with this Adoption ID\n");
+        return;
+    }
+    for(int i=found;i<adoption_count-1;i++){
+        adopters[i]=adopters[i+1];
+        break;
+    }
+    adoption_count--;
+    printf("Adoption record with ID %d deleted successfully!\n", search_id);
+}

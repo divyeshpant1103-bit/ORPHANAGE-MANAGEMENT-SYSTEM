@@ -1,6 +1,6 @@
 #ifndef AUTH_H
 #define AUTH_H
-#define FILE_NAME "users.dat"
+#define FILE_NAME "../data/users.dat"
 struct user{
     int user_id;
     char username[50];

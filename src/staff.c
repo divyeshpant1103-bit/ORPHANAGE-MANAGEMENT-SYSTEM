@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#define FILE_NAME "../data/staff.txt"
 struct staff
 {
 	int staff_id;
@@ -12,7 +13,7 @@ struct staff
 	char feedback[40];
 };
 
-int count();
+static int count();
 void add_staff();
 void search_staff();
 int generate_staff_id();
@@ -64,7 +65,7 @@ int count()
 {
 	FILE *fp;
 	char line[300];
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -90,7 +91,7 @@ int generate_prev_staff_id()
 	char line[300];
 	int prev_staff_id=0;
 	FILE *fp;
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -113,7 +114,7 @@ void add_staff()
 	int staff_count= count();
 	int d,m,y;
 	FILE *fp;
-	fp = fopen("staff.txt", "a");
+	fp = fopen(FILE_NAME, "a");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -142,7 +143,7 @@ void add_staff()
 		// scanf("%d",& s[i].staff_id);
 		getchar();                                                                      //empty buffer
 
-		printf("Enter satff name : ");                                                  //name
+		printf("Enter staff name : ");                                                  //name
 		fgets(s[i].name, sizeof(s[i].name), stdin);
 		size_t len = strlen(s[i].name);
 		if (len > 0 && s[i].name[len - 1] == '\n')
@@ -150,7 +151,7 @@ void add_staff()
 			s[i].name[len - 1] = '\0';
 		}
 
-		printf("Enter satff role : ");                                                  //role
+		printf("Enter staff role : ");                                                  //role
 		fgets(s[i].role, sizeof(s[i].role), stdin);
 		size_t len1 = strlen(s[i].role);
 		if (len1 > 0 && s[i].role[len1 - 1] == '\n')
@@ -158,7 +159,7 @@ void add_staff()
 			s[i].role[len1 - 1] = '\0';
 		}
 
-		printf("Enter satff contact: ");                                                //contact
+		printf("Enter staff contact: ");                                                //contact
 		fgets(s[i].contact, sizeof(s[i].contact), stdin);
 		size_t len2 = strlen(s[i].contact);
 		if (len2 > 0 && s[i].contact[len2 - 1] == '\n')
@@ -166,7 +167,7 @@ void add_staff()
 			s[i].contact[len2 - 1] = '\0';
 		}
 
-		printf("Enter satff joining date (dd mm yyyy) ");                               //joining date
+		printf("Enter staff joining date (dd mm yyyy) ");                               //joining date
 		scanf("%d%d%d", &d, &m, &y );
 
 
@@ -176,7 +177,7 @@ void add_staff()
 		scanf("%d",&s[i].salary);
 
 		getchar();                                                                      //empty buffer
-		printf("Enter satff feedback : ");                                              //feedback
+		printf("Enter staff feedback : ");                                              //feedback
 		fgets(s[i].feedback, sizeof(s[i].feedback), stdin);
 		size_t len3 = strlen(s[i].feedback);
 		if (len3 > 0 && s[i].feedback[len3 - 1] == '\n')
@@ -187,7 +188,7 @@ void add_staff()
 		fprintf(fp,"%d\t%s\t%s\t%s\t%s\t%d\t%s\n", s[i].staff_id, s[i].name, s[i].role, s[i].contact, s[i].joining_date,  s[i].salary, s[i].feedback);
 
 	}
-	printf("\nStaff details added successfully!!!");
+	printf("\nStaff details added successfully!!!\n");
 	fclose(fp);
 	free(s);
 }
@@ -198,7 +199,7 @@ void display_staff_list()
 	FILE *fp;
 	char line[300];
 	struct staff s;
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -228,7 +229,7 @@ void search_staff()
 	char line[300];
 	struct staff s;
 	int search_id, file_id, flag=0;
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	if (fp == NULL)
 	{
 		printf("Error opening file!\n");
@@ -264,19 +265,19 @@ void search_staff()
 }
 
 
-void change(struct staff *s)
+static void change(struct staff *s)
 {
 	int choise;
 	do
 	{
 
 		printf("\nChoose the data that needs to be changed : \n");
-		printf("1. Satff name : \n");                                                  //name
-		printf("2. Satff role : \n");                                                  //role
-		printf("3. Satff contact: \n");                                                //contact
-		printf("4. Satff joining date : \n");                               //joining date
+		printf("1. Staff name : \n");                                                  //name
+		printf("2. Staff role : \n");                                                  //role
+		printf("3. Staff contact: \n");                                                //contact
+		printf("4. Staff joining date : \n");                               //joining date
 		printf("5. Salary of the staff : \n");
-		printf("6. Satff feedback : \n");
+		printf("6. Staff feedback : \n");
 		printf("0. To exit : \n");
 
 		size_t len;
@@ -285,10 +286,10 @@ void change(struct staff *s)
 		// printf("Entered ");
 		switch(choise)
 		{
-		case 1:                                                                                  //change name
+		case 1: {                                                                                //change name
 			char name[20];
 
-			printf("Enter satff name : ");                                                  //name
+			printf("Enter staff name : ");                                                  //name
 			fgets(name, sizeof(name), stdin);
 			len = strlen(name);
 			if (len > 0 && name[len - 1] == '\n')
@@ -298,11 +299,12 @@ void change(struct staff *s)
 			strncpy(s->name, name, sizeof(s->name)-1);
 			s->name[sizeof(s->name)-1] = '\0';  // ensure null termination
 			break;
-		case 2:                                                                                  //change name
+		}
+		case 2: {
 			char role[50];
 
-			printf("Enter satff role : ");                                                  //role
-
+			printf("Enter staff role : ");                                                  //role
+			fgets(role, sizeof(role), stdin);
 
 			len = strlen(role);
 			if (len > 0 && role[len - 1] == '\n')
@@ -312,10 +314,11 @@ void change(struct staff *s)
 			strncpy(s->role, role, sizeof(s->role)-1);
 			s->role[sizeof(s->role)-1] = '\0';
 			break;
-		case 3:                                                                                  //change name
+		}
+		case 3: {
 			char contact[50];
 
-			printf("Enter satff contact : ");                                                  //role
+			printf("Enter staff contact : ");                                                  //role
 			fgets(contact, sizeof(contact), stdin);
 
 			len = strlen(contact);
@@ -326,13 +329,13 @@ void change(struct staff *s)
 			strncpy(s->contact, contact, sizeof(s->contact)-1);
 			s->contact[sizeof(s->contact)-1] = '\0';
 
-
 			break;
-		case 4:                                                                                  //change name
+		}
+		case 4: {
 			int d,m,y;
 			char new_date[15];
 
-			printf("Enter satff date of joining (dd mm yyyy): ");                            //joining date
+			printf("Enter staff date of joining (dd mm yyyy): ");                            //joining date
 			scanf("%d%d%d", &d, &m, &y );
 			sprintf(new_date,"%02d/%02d/%04d", d, m, y );
 
@@ -340,21 +343,22 @@ void change(struct staff *s)
 			s->joining_date[sizeof(s->joining_date)-1] = '\0';
 
 			break;
+		}
 
-		case 5:                                                                                  //change name
+		case 5: {
 			int salary;
-
 
 			printf("Enter the salary of the staff : ");                                    // salary
 			scanf("%d",&salary);
 
 			s->salary = salary;
 			break;
+		}
 
-		case 6:                                                                                  //change feedback
+		case 6: {
 			char feedback[40];
 
-			printf("Enter satff feedback : ");                                                  //feedback
+			printf("Enter staff feedback : ");                                                  //feedback
 			fgets(feedback, sizeof(feedback), stdin);
 			len = strlen(feedback);
 			if (len > 0 && feedback[len - 1] == '\n')
@@ -364,6 +368,7 @@ void change(struct staff *s)
 			strncpy(s->feedback, feedback, sizeof(s->feedback)-1);
 			s->feedback[sizeof(s->feedback)-1] = '\0';
 			break;
+		}
 		case 0:
 			printf("\nStaff record UPDATED successfully !!");
 			printf("\nExiting......\n");
@@ -383,10 +388,10 @@ void update_staff_details()
 	int flag=0;
 start:
 
-	printf("\nEnter the id of the satff to update details : ");
+	printf("\nEnter the id of the staff to update details : ");
 	scanf("%d",&search_id);
 
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	temp = fopen("temp.txt", "w");
 	if (fp == NULL || temp ==NULL)
 	{
@@ -427,8 +432,8 @@ start:
 
 	fclose(fp);
 	fclose(temp);
-	remove("staff.txt");
-	rename("temp.txt","staff.txt");
+	remove(FILE_NAME);
+	rename("temp.txt",FILE_NAME);
 
 
 
@@ -440,7 +445,7 @@ void delete_staff()
 	struct staff s;
 	int search_id, file_id ;
 	int flag=0;
-	fp = fopen("staff.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	temp = fopen("temp.txt", "w");
 	if (fp == NULL || temp ==NULL)
 	{
@@ -448,7 +453,7 @@ void delete_staff()
 		return ;
 	}
 
-	printf("Enter the id of the satff to delete : ");
+	printf("Enter the id of the staff to delete : ");
 	scanf("%d",&search_id);
 	getchar();
 
@@ -476,6 +481,6 @@ void delete_staff()
 	printf("\nStaff details DELETED successfully !!\n");
 	fclose(fp);
 	fclose(temp);
-	remove("staff.txt");
-	rename("temp.txt","staff.txt");
+	remove(FILE_NAME);
+	rename("temp.txt",FILE_NAME);
 }

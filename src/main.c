@@ -4,6 +4,10 @@
 #include "../include/adoption.h"
 #include "../include/auth.h"
 
+/* Forward declarations for modules without header declarations */
+void staff_menu(void);
+void donar_menu(void);
+
 static int is_admin_role(const char role[]){
     return (strcmp(role, "Admin") == 0 || strcmp(role, "admin") == 0);
 }// Helper function to check if the user has admin role
@@ -15,6 +19,11 @@ int main() {
         struct user current_user;
         current_user.user_id = -1;
 
+        /*
+         * Authentication menu: allow the user to register or login.
+         * This loop continues until a valid user session is established
+         * (i.e. current_user.user_id != -1) or the program exits.
+         */
         while(current_user.user_id == -1) {
             int auth_choice;
             char username[50];
@@ -53,6 +62,10 @@ int main() {
 
         load_children();
 
+        /*
+         * Main menu: shows core application modules. Admin-specific
+         * entries are displayed only for users with the Admin role.
+         */
         while(1) {
             int is_admin = is_admin_role(current_user.role);//check if the looged in user is admin or not
 

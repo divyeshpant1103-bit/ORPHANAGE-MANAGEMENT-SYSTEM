@@ -1,3 +1,9 @@
+/*
+ * child_records.c
+ * Responsible for managing in-memory child records and persisting
+ * them to a binary data file. Provides a menu-driven interface
+ * for CRUD operations on children and helpers to save/load state.
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -6,11 +12,25 @@
 #define CHILD_DATA_FILE_PRIMARY "../data/children.dat"
 #define CHILD_DATA_FILE_FALLBACK "data/children.dat"
 
+/* Dynamic array holding `struct Orphan` entries */
 struct Orphan *children = NULL;
+/* Number of active child records currently in memory */
 int child_count = 0;
+/* Allocated capacity of the `children` array */
 int children_capacity = 0;
-int next_child_id=1000;
+/* Next child id generator (persisted in file) */
+int next_child_id = 1000;
 
+/*
+ * child_menu: Displays the Child Records menu and dispatches
+ * user choices to the corresponding child record operations
+ * (add, display, search, delete, update).
+ */
+/*
+ * child_menu: Displays the Child Records menu and dispatches
+ * user choices to the corresponding child record operations
+ * (add, display, search, delete, update).
+ */
 void child_menu(){
     static int loaded_once = 0;
     if(!loaded_once){
@@ -48,6 +68,11 @@ void child_menu(){
     }
 }
 
+/*
+ * child_add: Add a new child to the in-memory array, expanding
+ * the array as needed. Assigns a generated child id and then
+ * persists the updated list with `save_children()`.
+ */
 void child_add(){
     // Resize array if needed
     if (child_count >= children_capacity) {
@@ -106,6 +131,9 @@ void child_add(){
     save_children();
 }
 
+/*
+ * child_display: Print all loaded child records to stdout.
+ */
 void child_display(){
     if(child_count==0){
         printf("NO child record found!\n");
@@ -130,6 +158,9 @@ void child_display(){
     
 }
 
+/*
+ * child_search: Find and display a single child by child ID.
+ */
 void child_search(){
     if(child_count==0){
         printf("NO child record found!\n");
@@ -167,6 +198,10 @@ void child_search(){
 
 }
 
+/*
+ * child_delete: Remove the child with the specified ID from
+ * the array and persist the change.
+ */
 void child_delete(){
     if(child_count==0){
         printf("NO CHILD RECORD FORUND!\n");
@@ -195,6 +230,10 @@ void child_delete(){
     printf("Child with ID %d deleted successfully!\n",id);
 }
 
+/*
+ * child_update: Allow selective updates to an existing child
+ * record's fields and persist after each change.
+ */
 void child_update(){
     if(child_count==0){
         printf("NO CHILD RECORD FOUND!\n");
@@ -285,12 +324,22 @@ void child_update(){
 }
 }
 
+/*
+ * generate_child_id: Return the next available child id and
+ * increment the generator. The function prints the suggested id
+ * for user visibility when adding a child.
+ */
 int generate_child_id(){
     int id = next_child_id++;
     printf("Suggested Child ID: %d\n", id);
     printf("Use this ID when adding a new child!\n"); 
     return id; 
 }
+
+/*
+ * update_child_Status: Helper used by other modules (e.g. adoption)
+ * to change a child's `status` string (for example to "Adopted").
+ */
 int update_child_Status(int child_id, const char *new_status){
     for(int i=0;i<child_count;i++){
         if(children[i].child_id==child_id){
@@ -302,6 +351,11 @@ int update_child_Status(int child_id, const char *new_status){
     return 0;
 }
 
+/*
+ * save_children: Persist `child_count`, the array of children,
+ * and the `next_child_id` to a binary file. Attempts a primary
+ * path first, then a fallback path if necessary.
+ */
 void save_children(){
     FILE *file = fopen(CHILD_DATA_FILE_PRIMARY, "wb");
     if(file == NULL){
@@ -322,14 +376,20 @@ void save_children(){
 }
 
 
+/*
+ * load_children: Read child data from disk into memory. If the
+ * file cannot be opened, initializes an empty in-memory state.
+ */
 void load_children(){
-    FILE *file = fopen("children.dat", "rb");
+    FILE *file = fopen(CHILD_DATA_FILE_PRIMARY, "rb");
     if(file == NULL){
-        child_count = 0;
-        next_child_id = 1000;
+       file = fopen(CHILD_DATA_FILE_FALLBACK, "rb");
+    }
+    if(file==NULL){
+        child_count=0;
+        next_child_id=1000;
         return;
     }
-
     // child count padho
     fread(&child_count, sizeof(int), 1, file);
 
