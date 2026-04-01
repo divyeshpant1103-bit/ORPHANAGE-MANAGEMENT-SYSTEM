@@ -11,11 +11,11 @@ void staff_menu()
         int choice;
         do
         {
-                printf("1. To add staff details\n");
-                printf("2. To display staff list\n");
-                printf("3. To search staff\n");
-                printf("4. To update staff details\n");
-                printf("5. To delete staff details\n");
+                printf("1. To add Staff details\n");
+                printf("2. To display Staff list\n");
+                printf("3. To search Staff\n");
+                printf("4. To update Staff details\n");
+                printf("5. To delete Staff details\n");
                 printf("0. Back\n\n");
                 printf("Enter the choice  ");
                 scanf("%d",&choice);
@@ -282,7 +282,7 @@ void change(struct staff *s)
                 case 1: {                                                       //change name
                         char name[20];
 
-                        printf("Enter satff name : ");                                                  //name
+                        printf("Enter staff name : ");                                                  //name
                         fgets(name, sizeof(name), stdin);
                         len = strlen(name);
                         if (len > 0 && name[len - 1] == '\n')
@@ -296,7 +296,7 @@ void change(struct staff *s)
                 case 2: {                                                       //change name
                         char role[50];
 
-                        printf("Enter satff role : ");                                                  //role
+                        printf("Enter staff role : ");                                                  //role
                         fgets(role, sizeof(role), stdin);
 
                         len = strlen(role);
@@ -311,7 +311,7 @@ void change(struct staff *s)
                 case 3: {                                                       //change name
                         char contact[50];
 
-                        printf("Enter satff contact : ");                                                   //role
+                        printf("Enter staff contact : ");                                                   //role
                         fgets(contact, sizeof(contact), stdin);
 
                         len = strlen(contact);
@@ -329,7 +329,7 @@ void change(struct staff *s)
                         int d,m,y;
                         char new_date[15];
 
-                        printf("Enter satff date of joining (dd mm yyyy): ");                            //joining date
+                        printf("Enter staff date of joining (dd mm yyyy): ");                            //joining date
                         scanf("%d%d%d", &d, &m, &y );
                         sprintf(new_date,"%02d/%02d/%04d", d, m, y );
 
@@ -353,7 +353,7 @@ void change(struct staff *s)
                 case 6: {                                                       //change feedback
                         char feedback[40];
 
-                        printf("Enter satff feedback : ");                                                  //feedback
+                        printf("Enter staff feedback : ");                                                  //feedback
                         fgets(feedback, sizeof(feedback), stdin);
                         len = strlen(feedback);
                         if (len > 0 && feedback[len - 1] == '\n')

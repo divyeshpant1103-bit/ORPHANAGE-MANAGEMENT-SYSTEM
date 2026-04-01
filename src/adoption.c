@@ -34,13 +34,13 @@ void adoption_menu(){
         printf("2. Display Adoption Records\n");
         printf("3. Search Adoption Records\n");
         printf("4. Update AdoptionRecord\n");
-        printf("5.Delete Adoption Records\n");
+        printf("5. Delete Adoption Records\n");
         printf("6. Approve Adoption\n");
         printf("0. Back to Main Menu\n");
         printf("==============================\n");
         printf("Enter you choice:");
         scanf("%d",&choice);
-        getchar();
+        
         switch(choice){
             case 1: adoption_add();
             break;

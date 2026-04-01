@@ -70,13 +70,13 @@ int main() {
             printf("\n===== ORPHANAGE MANAGEMENT SYSTEM =====\n");
             printf("Logged in as: %s (%s)\n", current_user.username, current_user.role);
             printf("1. Child Records\n");
-            printf("4. Adoption\n");
+            printf("2. Adoption\n");
             if(is_admin){//only show when the user is admin
-                printf("2. Staff Management\n");
-                printf("3. Donations\n");
+                printf("3. Staff Management\n");
+                printf("4. Donations\n");
                 printf("5. Reports\n");
             }
-            printf("7. Logout\n");
+            printf("6. Logout\n");
             printf("0. Exit\n");
             printf("========================================\n");
             printf("Enter your choice: ");
@@ -86,21 +86,21 @@ int main() {
             switch(choice) {
                 case 1: child_menu();
                     break;
-                case 2:
+                case 3:
                     if(is_admin){
                         staff_menu();
                     }else{
                         printf("Access denied! Admin only.\n");
                     }
                     break;
-                case 3:
+                case 4:
                     if(is_admin){
                         donar_menu();
                     }else{
                         printf("Access denied! Admin only.\n");
                     }
                     break;
-                case 4: adoption_menu();
+                case 2: adoption_menu();
                     break;
                 case 5:
                     if(is_admin){
@@ -109,7 +109,7 @@ int main() {
                         printf("Access denied! Admin only.\n");
                     }
                     break;
-                case 7:
+                case 6:
                     logout(current_user);
                     save_children();
                     current_user.user_id = -1;
