@@ -77,14 +77,14 @@ int main() {
                     break;
                 case 2:
                     if(is_admin){
-                        printf("Staff Management module coming soon.\n");
+                        staff_menu();
                     }else{
                         printf("Access denied! Admin only.\n");
                     }
                     break;
                 case 3:
                     if(is_admin){
-                        printf("Donations module coming soon.\n");
+                        donar_menu();
                     }else{
                         printf("Access denied! Admin only.\n");
                     }
