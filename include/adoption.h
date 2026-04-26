@@ -1,5 +1,4 @@
-#ifndef ADOPT_H
-#define ADOPT_H
+
 
 struct adoption{
     int adoption_id;
@@ -27,4 +26,4 @@ void adoption_approve();
 void save_adopter();
 void load_adopter();
 
-#endif
+extern int adoption_count;

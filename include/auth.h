@@ -1,4 +1,4 @@
-#define AUTH_H
+
 #define FILE_NAME "../data/users.dat"
 struct user{
     int user_id;

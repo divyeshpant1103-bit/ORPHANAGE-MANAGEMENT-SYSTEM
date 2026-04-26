@@ -1,12 +1,8 @@
-/*
- * auth.c
- * Authentication helpers for the orphanage app. Provides simple
- * user creation, loading, saving and login/logout utilities.
- */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/auth.h"
+#include "auth.h"
  
 
 static struct user invalid_user(){
@@ -19,9 +15,7 @@ static struct user invalid_user(){
     return u;
 }
 
-/*
- * create_user: Register a new user account and persist it.
- */
+
 void create_user(){
     struct user u;
 
@@ -69,7 +63,7 @@ void create_user(){
 }
 
 void save_user(struct user u,char filename[]){
-    /* Append the user record to a binary file. Caller provides filename. */
+   
     FILE *file = fopen(filename, "ab");
     if (file == NULL) {
         printf("Error opening file for writing!\n");
@@ -81,11 +75,7 @@ void save_user(struct user u,char filename[]){
 }
 
 struct user load_user(char filename[],char username[]){
-    /*
-     * load_user: Scan the binary user file for a username match and
-     * return the stored user. If file is missing or username not
-     * found, returns an invalid user with `user_id == -1`.
-     */
+
     struct user u = invalid_user();
     FILE *file = fopen(filename, "rb");
     if (file == NULL) {
@@ -104,10 +94,7 @@ struct user load_user(char filename[],char username[]){
     return invalid_user();
 }
 
-/*
- * login: Authenticate credentials against stored users and
- * return the authenticated `struct user` (or an invalid user).
- */
+
 struct user login(char username[],char password[]){
     struct user u = load_user(FILE_NAME, username);
     if(u.user_id == -1){
@@ -130,7 +117,6 @@ struct user login(char username[],char password[]){
 }
 
 void logout(struct user u){
-    /* Simple logout message; no session storage in this app. */
     if (u.user_id == -1) {
         printf("No active user session.\n");
         return;

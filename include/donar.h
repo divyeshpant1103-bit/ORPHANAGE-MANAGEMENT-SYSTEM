@@ -1,6 +1,4 @@
 
-#define DONAR_H
-
 struct donar
 {
     int donar_id;

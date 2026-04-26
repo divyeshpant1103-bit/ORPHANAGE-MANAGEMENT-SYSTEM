@@ -1,30 +1,18 @@
-/*
- * adoption.c
- * Manage adoption applications: collect adopter details,
- * track adoption applications, approve adoptions and update
- * related child status via the child records module.
- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/adoption.h"
-#include "../include/child.h"
-/* Dynamic array for adoption applications */
+#include "adoption.h"
+#include "child.h"
+// Dynamic array for adoption applications //
 struct adoption *adopters = NULL;
-/* Number of adoption applications currently in memory */
+//Number of adoption applications currently in memory //
 int adoption_count = 0;
-/* Allocated capacity of the `adopters` array */
+// Allocated capacity of the `adopters` array //
 int adoption_capacity = 0;
-/* Next adoption id generator */
+// Next adoption id generator //
 int next_adoption_id = 5000;
 
-
-/*
- * adoption_menu: Shows the Adoption menu and routes user choices
- * to adoption operations (add, display, search, update, delete,
- * and approve adoption applications).
- */
 
 void adoption_menu(){
     while(1){
@@ -38,7 +26,7 @@ void adoption_menu(){
         printf("6. Approve Adoption\n");
         printf("0. Back to Main Menu\n");
         printf("==============================\n");
-        printf("Enter you choice:");
+        printf("Enter you choice: ");
         scanf("%d",&choice);
         
         switch(choice){
@@ -60,11 +48,6 @@ void adoption_menu(){
     }
 }
 
-/*
- * adoption_add: Gather adopter details, assign an adoption id
- * and store the application in memory (persisting is left to
- * program lifecycle). New records start with status "Pending".
- */
 void adoption_add(){
     if(adoption_count>=adoption_capacity){
         int new_capacity=(adoption_capacity==0)?10:adoption_capacity*2;
@@ -128,11 +111,6 @@ void adoption_add(){
 
 
 
-/*
- * adoption_approve: Mark an adoption record as approved, set
- * the approval date, and update the corresponding child's
- * status by calling `update_child_Status()` from child records.
- */
 void adoption_approve(){
     if(adoption_count==0){
         printf("NO Adopters Record!!");
@@ -173,9 +151,7 @@ void adoption_approve(){
     }
 
 }
-/*
- * adoption_display: Print all loaded adoption application records.
- */
+
 void adoption_display(){
     if(adoption_count == 0){
         printf("No adoption records found!\n");
@@ -191,10 +167,7 @@ void adoption_display(){
         printf("-----------------------------\n");
     }
 }
-/*
- * adoption_search: Find and display a single adoption record
- * by adoption id.
- */
+
 void adoption_search(){
     if(adoption_count==0){
         printf("NO adoption record found!!\n");
@@ -228,10 +201,7 @@ void adoption_search(){
         printf("No adoption record found with this Adoption ID\n");
     }
 }
-/*
- * adoption_update: Allow interactive updates to an existing
- * adoption application's fields.
- */
+
 void adoption_update(){
     if(adoption_count==0){
         printf("NO adoption record found!!\n");

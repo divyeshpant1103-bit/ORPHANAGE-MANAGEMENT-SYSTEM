@@ -2,7 +2,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<ctype.h>
-#include"../include/staff.h"
+#include"staff.h"
 
 #define FILE_NAME "../data/staff.txt"
 

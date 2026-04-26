@@ -1,5 +1,4 @@
-#ifndef CHILD_H
-#define CHILD_H
+
 struct Orphan{
     int child_id;
     char child_name[100];
@@ -22,5 +21,3 @@ int update_child_Status(int child_id, const char *new_status);
 int generate_child_id();
 void save_children();
 void load_children();
-
-#endif

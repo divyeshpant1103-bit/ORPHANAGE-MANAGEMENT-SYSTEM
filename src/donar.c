@@ -2,7 +2,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<ctype.h>
-#include"../include/donar.h"
+#include"donar.h"
 
 #define DONAR_FILE "../data/donar.txt"
 
@@ -204,10 +204,9 @@ void display_donar_list()
 
     while (fgets(line, sizeof(line), fp) != NULL)
     {
-        // FIX: Replaced %[\t] with %[^\n] at the end to correctly read the date
         sscanf(line,"%d\t%[^\t]\t%[^\t]\t%[^\t]\t%f\t%[^\n]", &s.donar_id, s.name, s.donation_type, s.contact, &s.quantity, s.donation_date);
 
-        // FIX: Changed %-15f to %-15.2f for cleaner layout
+    
         printf("%-15d\t%-18s\t%-29s\t%-18s\t%-15.2f\t%s \n", s.donar_id, s.name, s.donation_type, s.contact, s.quantity, s.donation_date);
     }
 
@@ -355,7 +354,6 @@ start:
         return;
     }
 
-    // Copy headers
     fgets(line, sizeof(line), fp);
     fputs(line, temp);
     fgets(line, sizeof(line), fp);
@@ -363,7 +361,7 @@ start:
 
     while (fgets(line, sizeof(line), fp) != NULL)
     {
-        // FIX: Replaced %[\t] with %[^\n]
+        
         sscanf(line, "%d\t%[^\t]\t%[^\t]\t%[^\t]\t%f\t%[^\n]",
                &file_id, s.name, s.donation_type, s.contact, &s.quantity, s.donation_date);
 
@@ -424,7 +422,7 @@ void delete_donar()
     {
         if (sscanf(line, "%d", &file_id) == 1) 
         {
-            // FIX: Corrected deletion logic
+        
             if(search_id != file_id)
             {
                 fputs(line, temp);

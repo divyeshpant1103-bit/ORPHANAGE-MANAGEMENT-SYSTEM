@@ -1,14 +1,47 @@
 #include <stdio.h>
 #include <string.h>
-#include "../include/child.h"
-#include "../include/adoption.h"
-#include "../include/auth.h"
-#include "../include/staff.h"
-#include "../include/donar.h"
-
+#include "child.h"
+#include "adoption.h"
+#include "auth.h"
+#include "staff.h"
+#include "donar.h"
+#include "report.h"
+#include "audit.h"
+#include "data_management.h"
 static int is_admin_role(const char role[]){
     return (strcmp(role, "Admin") == 0 || strcmp(role, "admin") == 0);
 }// Helper function to check if the user has admin role
+
+static void reports_menu()
+{
+    int report_choice;
+    do {
+        printf("\n===== REPORTS & AUDIT =====\n");
+        printf("1. Summary Report\n");
+        printf("2. Audit Records\n");
+        printf("3. Data Management Records\n");
+        printf("0. Back\n");
+        printf("Enter your choice: ");
+        scanf("%d", &report_choice);
+        getchar();
+
+        switch (report_choice) {
+            case 1:
+                generate_report();
+                break;
+            case 2:
+                audit_menu();
+                break;
+            case 3:
+                data_management_menu();
+                break;
+            case 0:
+                return;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (report_choice != 0);
+}
 
 int main() {
     int choice;
@@ -17,11 +50,6 @@ int main() {
         struct user current_user;
         current_user.user_id = -1;
 
-        /*
-         * Authentication menu: allow the user to register or login.
-         * This loop continues until a valid user session is established
-         * (i.e. current_user.user_id != -1) or the program exits.
-         */
         while(current_user.user_id == -1) {
             int auth_choice;
             char username[50];
@@ -60,10 +88,6 @@ int main() {
 
         load_children();
 
-        /*
-         * Main menu: shows core application modules. Admin-specific
-         * entries are displayed only for users with the Admin role.
-         */
         while(1) {
             int is_admin = is_admin_role(current_user.role);//check if the looged in user is admin or not
 
@@ -74,8 +98,8 @@ int main() {
             if(is_admin){//only show when the user is admin
                 printf("3. Staff Management\n");
                 printf("4. Donations\n");
-                printf("5. Reports\n");
             }
+            printf("5. Reports\n");
             printf("6. Logout\n");
             printf("0. Exit\n");
             printf("========================================\n");
@@ -104,7 +128,7 @@ int main() {
                     break;
                 case 5:
                     if(is_admin){
-                        printf("Reports module coming soon.\n");
+                        reports_menu();
                     }else{
                         printf("Access denied! Admin only.\n");
                     }

@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+#include "../include/audit.h"
 
-// Audit structure
-struct audit {
-    int audit_id;
-    float donation_amount;
-    char handled_by[50];     // Who handled the audit
-    char compliance_status[10]; // approved / pending
-};
+#define AUDIT_DATA_FILE "../data/audit.dat"
 
 void add_audit()
 {
@@ -28,7 +23,7 @@ void add_audit()
     scanf("%s", a.compliance_status);
 
     // Save to file
-    fp = fopen("audit.dat", "ab");
+    fp = fopen(AUDIT_DATA_FILE, "ab");
     if (fp == NULL)
     {
         printf("Cannot open file!\n");
@@ -45,7 +40,7 @@ void add_audit()
 void display_audits()
 {
     struct audit a;
-    FILE *fp = fopen("audit.dat", "rb");
+    FILE *fp = fopen(AUDIT_DATA_FILE, "rb");
     if (fp == NULL)
     {
         printf("No audit records found!\n");
@@ -65,30 +60,30 @@ void display_audits()
     fclose(fp);
 }
 
-int main()
+void audit_menu()
 {
     int choice;
-    while (1)
+    do
     {
         printf("\n--- Audit Menu ---\n");
         printf("1. Add Audit Record\n");
         printf("2. Display Audit Records\n");
-        printf("3. Exit\n");
+        printf("0. Back\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
 
-        if (choice == 1)
-            add_audit();
-        else if (choice == 2)
-            display_audits();
-        else if (choice == 3)
+        switch (choice)
         {
-            printf("Exiting...\n");
-            break;
+            case 1:
+                add_audit();
+                break;
+            case 2:
+                display_audits();
+                break;
+            case 0:
+                return;
+            default:
+                printf("Invalid choice! Try again.\n");
         }
-        else
-            printf("Invalid choice! Try again.\n");
-    }
-
-    return 0;
+    } while (choice != 0);
 }
