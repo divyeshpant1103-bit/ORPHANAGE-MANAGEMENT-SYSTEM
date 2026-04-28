@@ -1,4 +1,8 @@
 
+
+
+#define DONAR_FILE "data/donar.txt"
+
 struct donar
 {
     int donar_id;
@@ -16,5 +20,3 @@ void display_donar_list();
 void delete_donar();
 void update_donar_details();
 void donar_menu();
-
-

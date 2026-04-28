@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "auth.h"
+#include "audit.h"
  
 
 static struct user invalid_user(){
@@ -14,6 +15,7 @@ static struct user invalid_user(){
     u.is_active = 0;
     return u;
 }
+
 
 
 void create_user(){
@@ -32,7 +34,7 @@ void create_user(){
         return;
     }
 
-    if(load_user(FILE_NAME, u.username).user_id != -1){
+    if(load_user(AUTH_FILE, u.username).user_id != -1){
         printf("Username already exists!\n");
         return;
     }
@@ -50,7 +52,7 @@ void create_user(){
     switch(choice){
         case 1: strcpy(u.role,"Admin");
             break;
-        case 2: strcpy(u.role,"Staff");
+        case 2: strcpy(u.role,"staff");
             break;
         default: printf("Invalid role choice! Defaulting to 'staff'.\n");
             strcpy(u.role,"staff");
@@ -58,20 +60,22 @@ void create_user(){
 
 
     u.is_active=1;
-    save_user(u,FILE_NAME);
-    printf("User created successfully!\n");
+    if(save_user(u,AUTH_FILE))
+        printf("User created successfully!\n");
+    else
+        printf("User creation failed!\n");
 }
 
-void save_user(struct user u,char filename[]){
-   
+int save_user(struct user u,char filename[]){
     FILE *file = fopen(filename, "ab");
     if (file == NULL) {
         printf("Error opening file for writing!\n");
-        return;
+        return 0;  // failed
     }
+    login_display(u);
     fwrite(&u, sizeof(struct user), 1, file);
     fclose(file);
-    printf("User saved successfully!\n");
+    return 1;  // success
 }
 
 struct user load_user(char filename[],char username[]){
@@ -79,7 +83,6 @@ struct user load_user(char filename[],char username[]){
     struct user u = invalid_user();
     FILE *file = fopen(filename, "rb");
     if (file == NULL) {
-        printf("User file not found.\n");
         return u;
     }
 
@@ -96,7 +99,7 @@ struct user load_user(char filename[],char username[]){
 
 
 struct user login(char username[],char password[]){
-    struct user u = load_user(FILE_NAME, username);
+    struct user u = load_user(AUTH_FILE, username);
     if(u.user_id == -1){
         printf("Login failed! User not found.\n");
         return u;
@@ -113,6 +116,7 @@ struct user login(char username[],char password[]){
     }
 
     printf("Login successful! Welcome %s (%s).\n", u.username, u.role);
+    audit("logged in successfully");
     return u;
 }
 
@@ -122,6 +126,16 @@ void logout(struct user u){
         return;
     }
     printf("User %s logged out successfully.\n", u.username);
+    audit("logged out successfully");
+}
+
+void login_display(struct user u){
+    printf("\n--- User Login Info ---\n");
+    printf("User ID: %d\n", u.user_id);
+    printf("Username: %s\n", u.username);
+    printf("Role: %s\n", u.role);
+    printf("Status: %s\n", u.is_active ? "Active" : "Inactive");
+    printf("------------------------\n");
 }
 
 

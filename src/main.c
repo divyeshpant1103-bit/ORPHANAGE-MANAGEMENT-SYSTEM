@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "child.h"
 #include "adoption.h"
 #include "auth.h"
@@ -8,6 +9,7 @@
 #include "report.h"
 #include "audit.h"
 #include "data_management.h"
+
 static int is_admin_role(const char role[]){
     return (strcmp(role, "Admin") == 0 || strcmp(role, "admin") == 0);
 }// Helper function to check if the user has admin role
@@ -30,10 +32,10 @@ static void reports_menu()
                 generate_report();
                 break;
             case 2:
-                audit_menu();
+                display_audits();
                 break;
             case 3:
-                data_management_menu();
+                data_management();
                 break;
             case 0:
                 return;
@@ -65,7 +67,9 @@ int main() {
 
             switch(auth_choice){
                 case 1:
+
                     create_user();
+
                     break;
                 case 2:
                     printf("Enter Username: ");
@@ -78,6 +82,14 @@ int main() {
 
                     current_user = login(username, password);
                     break;
+                case 3:
+                    if(current_user.user_id != -1){
+                        login_display(current_user);
+                        save_user(current_user, AUTH_FILE);
+                    }else{
+                        printf("No user is currently logged in!\n");
+                    }
+                    break;
                 case 0:
                     printf("Goodbye!\n");
                     return 0;
@@ -87,6 +99,7 @@ int main() {
         }
 
         load_children();
+        load_adopter();
 
         while(1) {
             int is_admin = is_admin_role(current_user.role);//check if the looged in user is admin or not
@@ -136,12 +149,14 @@ int main() {
                 case 6:
                     logout(current_user);
                     save_children();
+                    save_adopter();
                     current_user.user_id = -1;
                     break;
                 case 0:
                     printf("Goodbye!\n");
                     logout(current_user);
                     save_children();
+                    save_adopter();
                     return 0;
                 default:
                     printf("Invalid choice!\n");

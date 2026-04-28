@@ -3,8 +3,8 @@
 #include<stdlib.h>
 #include<ctype.h>
 #include"staff.h"
+#include"audit.h"
 
-#define FILE_NAME "../data/staff.txt"
 
 void staff_menu()
 {
@@ -68,9 +68,10 @@ static int count()
         int count=0;
         while (fgets(line, sizeof(line), fp) != NULL)
         {
-                if (isdigit((unsigned char)line[0]))
+                int id;
+                if(sscanf(line, "%d", &id) == 1)
                 {
-                        count++;
+                    count++;
                 }
         }
 
@@ -123,6 +124,7 @@ void add_staff()
         int n;
         printf("Enter the number of staff to input : ");
         scanf("%d",&n);
+        getchar();
         if(staff_count==0)
         {
                 fprintf(fp,"%-15s\t%-18s\t%-18s\t%-18s\t%-15s\t%-15s\t%s\n","STAFF ID", "NAME", "ROLE", "CONTACT","JOINING DATE", "SALARY", "FEEDBACK" );
@@ -131,15 +133,19 @@ void add_staff()
         int prev_staff_id= generate_prev_staff_id();
 
         struct staff *s = (struct staff*) malloc( n* sizeof(struct staff));
-
+        if(s == NULL)
+        {
+                printf("Memory allocation failed!\n");
+                fclose(fp);
+                return;
+        }
         for (i=0; i <  n ; i++) // input staff details
         {
                 printf("Enter details of staff %d\n", staff_count+i+1);
                 s[i].staff_id = prev_staff_id + i + 1;
 
                 printf("Staff id : %d\n", s[i].staff_id );                                                    //from generated id
-                // scanf("%d",& s[i].staff_id);
-                getchar();                                                                      //empty buffer
+                                                                               
                 printf("Enter staff name : ");                                                  //name
                 fgets(s[i].name, sizeof(s[i].name), stdin);
                 size_t len = strlen(s[i].name);
@@ -185,6 +191,7 @@ void add_staff()
                 fprintf(fp,"%d\t%s\t%s\t%s\t%s\t%d\t%s\n", s[i].staff_id, s[i].name, s[i].role, s[i].contact, s[i].joining_date,  s[i].salary, s[i].feedback);
         }
         printf("\nStaff details added successfully!!!");
+        audit("Added staff record");
         fclose(fp);
         free(s);
 }
@@ -461,19 +468,22 @@ void delete_staff()
         while(fgets(line, sizeof(line), fp)!= NULL)
         {
                 sscanf(line, "%d ", &file_id );
-                if(search_id != file_id)
+                if(search_id == file_id)
                 {
-                        fputs(line, temp);
-                        printf("%d",file_id);
                         flag=1;
+                        continue;
+                        
                 }
+                fputs(line, temp);
 
         }
         if(flag==0) 
         {
                 printf("Staff ID not found !!");
         }
-        printf("\nStaff details DELETED successfully !!\n");
+        else
+                printf("\nStaff details DELETED successfully !!\n");
+                audit("Deleted staff record");
         fclose(fp);
         fclose(temp);
         remove(FILE_NAME);

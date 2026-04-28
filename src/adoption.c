@@ -4,6 +4,7 @@
 #include <string.h>
 #include "adoption.h"
 #include "child.h"
+#include "audit.h"
 // Dynamic array for adoption applications //
 struct adoption *adopters = NULL;
 //Number of adoption applications currently in memory //
@@ -104,8 +105,9 @@ void adoption_add(){
     strcpy(adopters[i].status, "Pending");
     
     printf("Adoption application submitted successfully! Status is currently 'Pending'.\n");
-
+   audit("Added adoption record");
     adoption_count++;
+    save_adopter();
 
 }
 
@@ -141,7 +143,7 @@ void adoption_approve(){
     adopters[found].approval_date[strcspn(adopters[found].approval_date,"\n")]=0;
 
 
-    // Call the helper function from child.c (make sure you added it there!)
+  
     int success = update_child_Status(adopters[found].child_id, "Adopted");
     
     if (success) {
@@ -241,41 +243,49 @@ void adoption_update(){
                     fgets(adopters[found].adopter_name,100,stdin);
                     adopters[found].adopter_name[strcspn(adopters[found].adopter_name,"\n")]=0;
                     printf("Adopter name updated successfully!\n");
+                    save_adopter();
                     break;
             case 2: printf("Enter the new Adopter Age: ");
                     scanf("%d",&adopters[found].adopter_age);
                     getchar();
                     printf("Adopter age updated successfully!\n");
+                    save_adopter();
                     break;          
             case 3: printf("Enter the new Adopter Contact: ");
                     fgets(adopters[found].adopter_contact,15,stdin);
                     adopters[found].adopter_contact[strcspn(adopters[found].adopter_contact,"\n")]=0;
                     printf("Adopter contact updated successfully!\n");
+                    save_adopter();
                     break;
             case 4: printf("Enter the new Adopter Address: ");
                     fgets(adopters[found].adopter_address,150,stdin);
                     adopters[found].adopter_address[strcspn(adopters[found].adopter_address,"\n")]=0;
                     printf("Adopter address updated successfully!\n");
+                    save_adopter();
                     break;
             case 5: printf("Enter the new Adopter Occupation: ");
                     fgets(adopters[found].adopter_occupation,50,stdin);
                     adopters[found].adopter_occupation[strcspn(adopters[found].adopter_occupation,"\n")]=0;
                     printf("Adopter occupation updated successfully!\n");
+                    save_adopter();
                     break;
             case 6: printf("Enter the new Adopter Income: ");
                     scanf("%f",&adopters[found].adopter_income);
                     getchar();
                     printf("Adopter income updated successfully!\n");
+                    save_adopter();
                     break;
             case 7: printf("Enter the new Marital Status: ");
                     fgets(adopters[found].marital_status,20,stdin);     
                     adopters[found].marital_status[strcspn(adopters[found].marital_status,"\n")]=0;
                     printf("Marital status updated successfully!\n");
+                    save_adopter();
                     break;
             case 0: return;
             default: printf("Invalid choice!\n");   
         }
     }
+   audit("Updated adoption record");
 }
 void adoption_delete(){
     if(adoption_count==0){
@@ -302,5 +312,79 @@ void adoption_delete(){
         break;
     }
     adoption_count--;
+    save_adopter();
     printf("Adoption record with ID %d deleted successfully!\n", search_id);
+    audit("Deleted adoption record");
+}
+void save_adopter(){
+    FILE *fp=fopen("../data/adoption.txt","w");
+    if(fp==NULL){
+        printf("Error opening file for writing!\n");
+        return;
+    }
+    for(int i=0;i<adoption_count;i++){
+        fprintf(fp, "%d\t%d\t%s\t%d\t%s\t%s\t%s\t%.2f\t%s\t%s\t%s\t%s\n",
+                adopters[i].adoption_id,
+                adopters[i].child_id,
+                adopters[i].adopter_name,
+                adopters[i].adopter_age,
+                adopters[i].adopter_contact,
+                adopters[i].adopter_address,
+                adopters[i].adopter_occupation,
+                adopters[i].adopter_income,
+                adopters[i].marital_status,
+                adopters[i].application_date,
+                adopters[i].approval_date,
+                adopters[i].status);
+    }
+    fclose(fp);
+}
+void load_adopter() {
+    FILE *fp = fopen("../data/adoption.txt", "r");
+    if (fp == NULL) {
+        printf("No adoption records found, starting with an empty list.\n");
+        return;
+    }
+
+    char line[1024];
+    adoption_count = 0;
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        adoption_count++;
+    }
+    if (adoption_count > 0) {
+        adopters = malloc(adoption_count * sizeof(struct adoption));
+        adoption_capacity = adoption_count; 
+
+        if (adopters == NULL) {
+            printf("Memory allocation failed!\n");
+            fclose(fp);
+            adoption_count = 0;
+            return;
+        }
+        rewind(fp);
+        int i = 0;
+        int max_id = 4999; 
+        while (fgets(line, sizeof(line), fp) != NULL) {
+            sscanf(line, "%d\t%d\t%[^\t]\t%d\t%[^\t]\t%[^\t]\t%[^\t]\t%f\t%[^\t]\t%[^\t]\t%[^\t]\t%[^\n]",
+                   &adopters[i].adoption_id,
+                   &adopters[i].child_id,
+                   adopters[i].adopter_name,
+                   &adopters[i].adopter_age,
+                   adopters[i].adopter_contact,
+                   adopters[i].adopter_address,
+                   adopters[i].adopter_occupation,
+                   &adopters[i].adopter_income,
+                   adopters[i].marital_status,
+                   adopters[i].application_date,
+                   adopters[i].approval_date,
+                   adopters[i].status);
+            if (adopters[i].adoption_id > max_id) {
+                max_id = adopters[i].adoption_id;
+            }
+            i++;
+        }
+        next_adoption_id = max_id + 1;
+    }
+    fclose(fp);
+    printf("Loaded %d adoption record(s).\n", adoption_count);
 }

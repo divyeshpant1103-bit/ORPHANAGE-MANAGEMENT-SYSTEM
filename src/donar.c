@@ -4,7 +4,8 @@
 #include<ctype.h>
 #include"donar.h"
 
-#define DONAR_FILE "../data/donar.txt"
+#undef DONAR_FILE
+#define DONAR_FILE "data/donar.txt"
 
 void donar_menu()
 {

@@ -1,6 +1,6 @@
-#ifndef STAFF_H
-#define STAFF_H
 
+
+#define FILE_NAME "data/staff.txt"
 struct staff
 {
     int staff_id;
@@ -11,7 +11,6 @@ struct staff
     int salary;
     char feedback[40];
 };
-
 int generate_prev_staff_id();
 void add_staff();
 void search_staff();
@@ -20,4 +19,3 @@ void delete_staff();
 void update_staff_details();
 void staff_menu();
 
-#endif /* STAFF_H */

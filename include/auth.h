@@ -1,5 +1,5 @@
 
-#define FILE_NAME "../data/users.dat"
+#define AUTH_FILE "data/users.dat"
 struct user{
     int user_id;
     char username[50];
@@ -11,6 +11,7 @@ struct user{
 struct user login(char username[],char password[]);
 void logout(struct user u);
 void create_user();
-void save_user(struct user u,char filename[]);
+int save_user(struct user u,char filename[]);
 struct user load_user(char filename[],char username[]);
+void login_display(struct user u);
 

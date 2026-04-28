@@ -3,8 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "child.h"
+#include "audit.h"
 
-#define CHILD_DATA_FILE_PRIMARY  "../data/children.dat"
+
+#define CHILD_DATA_FILE_PRIMARY  "data/children.dat"
 #define CHILD_DATA_FILE_FALLBACK "data/children.dat"
 struct Orphan *children = NULL;  
 int child_count       = 0;     
@@ -107,6 +109,7 @@ void child_add() {
     child_count++; 
     save_children();
     printf("Child record added successfully!\n");
+    audit("Added child record");
 }
 
 void child_display() {
@@ -197,6 +200,7 @@ void child_delete() {
     child_count--;
     save_children();
     printf("Child with ID %d deleted successfully!\n", id);
+    audit("Deleted child record");
 }
 
 void child_update() {
@@ -312,6 +316,7 @@ void child_update() {
                 printf("Invalid choice!\n");
         }
     }
+    audit("Updated child record");
 }
 
 int generate_child_id() {

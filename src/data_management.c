@@ -1,93 +1,91 @@
 #include <stdio.h>
 #include <string.h>
-#include "data_management.h"
+#include "../include/data_management.h"
+#include "child.h"
+#include "adoption.h"
+#include "auth.h"
+#include "staff.h"
+#include "donar.h"
+#include "report.h"
+#include "audit.h"
 
-#define RECORDS_FILE "../data/records.dat"
 
-void add_record()
-{
-    FILE *fp;
-    struct record r;
 
-    // Input record details
-    printf("Enter Record ID: ");
-    scanf("%d", &r.record_id);
-
-    printf("Enter Record Type (child/staff/donor): ");
-    scanf("%9s", r.record_type);
-
-    printf("Enter Name: ");
-    scanf("%99s", r.name);
-
-    printf("Enter Action (update/delete): ");
-    scanf("%9s", r.action);
-
-    // Save record to file
-    fp = fopen(RECORDS_FILE, "ab");
-    if (fp == NULL)
-    {
-        printf("Error opening file!\n");
-        return;
-    }
-    fwrite(&r, sizeof(r), 1, fp);
-    fclose(fp);
-
-    printf("Record saved successfully!\n");
-}
-
-void display_records()
-{
-    FILE *fp;
-    struct record r;
-
-    // Display all records
-    fp = fopen(RECORDS_FILE, "rb");
-    if (fp == NULL)
-    {
-        printf("No records found!\n");
-        return;
-    }
-
-    printf("\n--- Records List ---\n");
-    while (fread(&r, sizeof(r), 1, fp))
-    {
-        printf("ID: %d\n", r.record_id);
-        printf("Type: %s\n", r.record_type);
-        printf("Name: %s\n", r.name);
-        printf("Action: %s\n", r.action);
-        printf("-------------------\n");
-    }
-    fclose(fp);
-}
-
-void data_management_menu()
+void data_management()
 {
     int choice;
-
-    while (1)
-    {
-        printf("\n--- Data Management ---\n");
-        printf("1. Add Record\n");
-        printf("2. Display Records\n");
+    while (1) {
+        printf("\n1. Add child record\n");
+        printf("2. Display all children\n");
+        printf("3. Search child by ID\n");
+        printf("4. Delete child record\n");
+        printf("5. Update child record\n");
+        printf("\n6. To add donor details\n");
+        printf("7. To display donor list\n");
+        printf("8. To search donor\n");
+        printf("9. To update donor details\n");
+        printf("10. To delete donor details\n");
+        printf("\n11. To add Staff details\n");
+        printf("12. To display Staff list\n");
+        printf("13. To search Staff\n");
+        printf("14. To update Staff details\n");
+        printf("15. To delete Staff details\n");
         printf("0. Back\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        if (choice == 1)
+        printf("Enter the choice: ");
+        scanf("%d",&choice);
+        getchar();
+        printf("\n");
+        switch (choice)
         {
-            add_record();
-        }
-        else if (choice == 2)
-        {
-            display_records();
-        }
-        else if (choice == 0)
-        {
-            return;
-        }
-        else
-        {
-            printf("Invalid choice! Try again.\n");
+        
+            case 1:
+                child_add();     
+                break;
+            case 2: 
+                child_display(); 
+                break;
+            case 3: 
+                child_search();  
+                break;
+            case 4:
+                child_delete();  
+                break;
+            case 5:
+                 child_update();  
+                break;
+            case 6:
+                add_donar();
+                break;
+            case 7:
+                display_donar_list();
+                break;
+            case 8:
+                search_donar();
+                break;
+            case 9:
+                update_donar_details();
+                break;
+            case 10:
+                delete_donar();
+                break;
+            case 11:
+                add_staff();
+                break;
+            case 12:
+                display_staff_list();
+                break;
+            case 13:
+                search_staff();
+                break;
+            case 14:
+                update_staff_details();
+                break;
+            case 15:
+                delete_staff();
+                break;
+            case 0: 
+                return;
+            default: printf("Invalid choice!\n");
         }
     }
 }

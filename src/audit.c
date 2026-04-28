@@ -1,89 +1,30 @@
 #include <stdio.h>
 #include <string.h>
-#include "../include/audit.h"
+#include "audit.h"
+#include "auth.h"
+#include "time.h"
 
-#define AUDIT_DATA_FILE "../data/audit.dat"
-
-void add_audit()
-{
-    struct audit a;
-    FILE *fp;
-
-    // Input details
-    printf("\nEnter Audit ID: ");
-    scanf("%d", &a.audit_id);
-
-    printf("Enter Donation Amount: ");
-    scanf("%f", &a.donation_amount);
-
-    printf("Enter Name of Person Handling Audit: ");
-    scanf("%s", a.handled_by);
-
-    printf("Enter Compliance Status (approved/pending): ");
-    scanf("%s", a.compliance_status);
-
-    // Save to file
-    fp = fopen(AUDIT_DATA_FILE, "ab");
-    if (fp == NULL)
-    {
-        printf("Cannot open file!\n");
+void audit(char *action){
+    FILE *fp=fopen("data/audit.txt","a");
+    if(fp==NULL){
+        printf("Error opening audit file!\n");
+        return;
+}
+time_t t=time(NULL);
+struct tm *tm=localtime(&t);
+fprintf(fp,"TIME: %02d:%02d,DATE: %02d-%02d-%04d,ACTION:%s\n",tm->tm_hour,tm->tm_min,tm->tm_mday,tm->tm_mon+1,tm->tm_year+1900,action);
+fclose(fp);
+}
+void display_audits(){
+    FILE *fp=fopen("data/audit.txt","r");
+    if(fp==NULL){
+        printf("Error opening audit file!\n");
         return;
     }
-
-    fwrite(&a, sizeof(a), 1, fp);
-    fclose(fp);
-
-    printf("Audit record saved successfully!\n");
-}
-
-// Function to display all audits
-void display_audits()
-{
-    struct audit a;
-    FILE *fp = fopen(AUDIT_DATA_FILE, "rb");
-    if (fp == NULL)
-    {
-        printf("No audit records found!\n");
-        return;
+    char t[100];
+    printf("\n===== AUDIT LOGS =====\n");
+    while(fgets(t,sizeof(t),fp)){
+        printf("%s",t);
     }
-
-    printf("\n--- Audit Records ---\n");
-    while (fread(&a, sizeof(a), 1, fp))
-    {
-        printf("Audit ID         : %d\n", a.audit_id);
-        printf("Donation Amount  : %.2f\n", a.donation_amount);
-        printf("Handled By       : %s\n", a.handled_by);
-        printf("Compliance Status: %s\n", a.compliance_status);
-        printf("-------------------------------\n");
-    }
-
     fclose(fp);
-}
-
-void audit_menu()
-{
-    int choice;
-    do
-    {
-        printf("\n--- Audit Menu ---\n");
-        printf("1. Add Audit Record\n");
-        printf("2. Display Audit Records\n");
-        printf("0. Back\n");
-        printf("Enter choice: ");
-        scanf("%d", &choice);
-
-        switch (choice)
-        {
-            case 1:
-                add_audit();
-                break;
-            case 2:
-                display_audits();
-                break;
-            case 0:
-                return;
-            default:
-                printf("Invalid choice! Try again.\n");
-        }
-    } while (choice != 0);
 }
