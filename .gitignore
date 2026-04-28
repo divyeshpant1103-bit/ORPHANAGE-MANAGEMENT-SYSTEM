@@ -1,5 +1,10 @@
-.DS_Store
-src/orphanage
+# Ignore runtime data and generated binaries
+/data/*.txt
+/data/*.dat
+/data/*.dat.lock
+orphanage_app
 src/orphanage_app
-src/users.dat
-*.tmp
+
+# Ignore OS/editor artifacts
+.DS_Store
+*.swp
